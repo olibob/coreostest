@@ -10,3 +10,10 @@ coreos:
       command: start
     - name: fleet.service
       command: start
+    - name: media-dockerdata.mount
+      command: start
+      content: |
+        [Mount]
+        What=/dev/xvdc
+        Where=/media/dockerdata
+        Type=ext3
