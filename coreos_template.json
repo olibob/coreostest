@@ -140,18 +140,7 @@
             "    - name: etcd.service\n",
             "      command: start\n",
             "    - name: fleet.service\n",
-            "      command: start\n",
-            "    - name: resizefs.service\n",
-            "      command: start\n",
-            "      content: |\n",
-            "        [Unit]\n",
-            "        Description=Resize root partition\n",
-            "        [Service]\n",
-            "        Type=oneshot\n",
-            "        After=fleet.service\n",
-            "        RemainAfterExit=yes\n",
-            "        ExecStart=-/bin/sh -c '/usr/bin/sleep 30; /usr/sbin/resize2fs /dev/xvda'; return 0\n",
-            "        ExecStop=/bin/sh -c 'echo'\n"
+            "      command: start\n"
             ] ]
           }
         }

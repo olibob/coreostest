@@ -10,12 +10,3 @@ coreos:
       command: start
     - name: fleet.service
       command: start
-    - name: format-ebs-drive.service
-      command: start
-      content: |
-        [Unit]
-        Description=Resize root partition
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=resize2fs /dev/xvda
