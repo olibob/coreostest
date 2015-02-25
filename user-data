@@ -14,21 +14,8 @@ coreos:
       command: start
       content: |
         [Unit]
-        Description=Format EBS docker data drive
+        Description=Resize root partition
         [Service]
         Type=oneshot
         RemainAfterExit=yes
-        ExecStart=/usr/sbin/wipefs -f /dev/xvdc
-        ExecStart=/usr/sbin/mkfs.btrfs -f /dev/xvdc
-    - name: var-lib-docker.mount
-      command: start
-      content: |
-        [Unit]
-        Description=Mount EBS drive to /var/lib/docker
-        Requires=format-ebs-drive.service
-        After=format-ebs-drive.service
-        Before=docker.service
-        [Mount]
-        What=/dev/xvdc
-        Where=/var/lib/docker
-        Type=btrfs
+        ExecStart=resize2fs /dev/xvda
