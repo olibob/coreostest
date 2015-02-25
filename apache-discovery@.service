@@ -1,11 +1,35 @@
 [Unit]
-Description=Announce Apache1
-BindsTo=apache@%i.service
+Description=Announce Apache server
+
+# Requirements
+Requires=etcd.service
+Requires=apache@%i.service
+
+# Dependency ordering and binding
+After=etcd.service
 After=apache@%i.service
+BindsTo=apache@%i.service
 
 [Service]
-ExecStart=/bin/sh -c "while true; do etcdctl set /services/website/apache@%i '{\"host\": %H, \"port\": 80}' -ttl 60; sleep 45; done"
+
+# Get core OS environment variables
+EnvironmentFile=/etc/environment
+
+# Start
+# Test wether service is accessible and then register useful information
+ExecStart=/bin/bash -c "while true; \
+  do \
+    curl -f http://${COREOS_PUBLIC_IPV4}:80 > /dev/null 2>&1; \
+    if [ $? -eq 0 ]; then \
+      /usr/bin/etcdctl set /services/httpd/apache@%i '{\"host\": \"%H\", \"ipv4_addr\": \"${COREOS_PUBLIC_IPV4}\", \"port\": 80}' --ttl 30; \
+    else \
+      /usr/bin/etcdctl rm /services/httpd/apache@%i; \
+    fi; \
+    sleep 20; \
+  done"
+
 ExecStop=/usr/bin/etcdctl rm /services/website/apache@%i
 
 [X-Fleet]
+# Schedule on the same machine as the associated apache server
 MachineOf=apache@%i.service
