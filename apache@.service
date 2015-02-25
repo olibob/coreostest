@@ -1,15 +1,39 @@
 [Unit]
 Description=A simple Apache web site
-After=docker.service
+
+# Requirements
+Requires=etcd.service
 Requires=docker.service
+# Requires=apache-discovery@1
+
+# Dependency ordering
+After=etcd.service
+After=docker.service
+# Before=apache-discovery@1
 
 [Service]
+# Let processes take awhile to start up (for first run Docker containers)
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill apache1
-ExecStartPre=-/usr/bin/docker rm apache1
+
+# Change killmode from "control-group" to "none" to let Docker remove
+# work correctly.
+KillMode=none
+
+# Get CoreOS environmental variables
+EnvironmentFile=/etc/environment
+
+# Pre-start and Start
+## Directives with "=-" are allowed to fail without consequence
+ExecStartPre=-/usr/bin/docker kill apache
+ExecStartPre=-/usr/bin/docker rm apache
 ExecStartPre=/usr/bin/docker pull olibob/simpleweb
-ExecStart=/usr/bin/docker run --rm --name apache1 -p 80:80 olibob/simpleweb
-ExecStop=/usr/bin/docker stop apache1
+
+# Start
+ExecStart=/usr/bin/docker run --rm --name apache -p 80:80 olibob/simpleweb
+
+# Stop
+ExecStop=/usr/bin/docker stop apache
 
 [X-Fleet]
+# Don't schedule on the same machine as other Apache instances
 Conflicts=apache@*.service
