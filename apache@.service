@@ -4,12 +4,12 @@ Description=A simple Apache web site
 # Requirements
 Requires=etcd.service
 Requires=docker.service
-# Requires=apache-discovery@1
+Requires=apache-discovery@%i.service
 
 # Dependency ordering
 After=etcd.service
 After=docker.service
-# Before=apache-discovery@1
+Before=apache-discovery@%i.service
 
 [Service]
 # Let processes take awhile to start up (for first run Docker containers)
@@ -24,15 +24,15 @@ EnvironmentFile=/etc/environment
 
 # Pre-start and Start
 ## Directives with "=-" are allowed to fail without consequence
-ExecStartPre=-/usr/bin/docker kill apache
-ExecStartPre=-/usr/bin/docker rm apache
+ExecStartPre=-/usr/bin/docker kill apache.%i
+ExecStartPre=-/usr/bin/docker rm apache.%i
 ExecStartPre=/usr/bin/docker pull olibob/simpleweb
 
 # Start
-ExecStart=/usr/bin/docker run --rm --name apache -p 80:80 olibob/simpleweb
+ExecStart=/usr/bin/docker run --rm --name apache.%i -p 80:80 olibob/simpleweb
 
 # Stop
-ExecStop=/usr/bin/docker stop apache
+ExecStop=/usr/bin/docker stop apache.%i
 
 [X-Fleet]
 # Don't schedule on the same machine as other Apache instances
