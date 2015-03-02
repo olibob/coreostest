@@ -1,0 +1,27 @@
+On master (ec2-54-93-108-238.eu-central-1.compute.amazonaws.com):
+
+sudo systemctl enable apiserver.service
+sudo systemctl enable controller-manager.service
+sudo systemctl enable scheduler.service
+sudo systemctl enable flannel.service
+sudo systemctl enable docker.service
+sudo systemctl enable proxy.service
+sudo systemctl enable kubelet.service
+
+On minions:
+
+sudo systemctl enable scheduler.service
+sudo systemctl enable flannel.service
+sudo systemctl enable docker.service
+sudo systemctl enable proxy.service
+sudo systemctl enable kubelet.service
+
+scheduler.service flannel.service docker.service proxy.service kubelet.service
+
+sudo systemctl disable apiserver.service
+sudo systemctl disable controller-manager.service
+sudo systemctl disable scheduler.service
+sudo systemctl disable flannel.service
+sudo systemctl disable docker.service
+sudo systemctl disable proxy.service
+sudo systemctl disable kubelet.service

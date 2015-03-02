@@ -1,0 +1,15 @@
+[Unit]
+Description=Kubernetes Kubelet
+After=etcd.service
+After=docker.service
+Wants=etcd.service
+Wants=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/opt/bin/kubelet --address=172.17.8.101 --port=10250 --hostname_override=core-01 --etcd_servers=http://127.0.0.1:4001 --logtostderr=true
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
